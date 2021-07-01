@@ -5,9 +5,7 @@
   become: true
   
   var_files:
-    - vars/main.yml
-
-    
+    - vars/main.yml   
 
   tasks:
     #- name: Include vars
