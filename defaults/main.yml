@@ -1,0 +1,29 @@
+---
+#defaults for postgresql
+postgresql_version: 10
+postgresql_version_terse: "{{ postgresql_version | replace('.', '') }}"  # Short version of the postgresql_version, used in some path and filenames
+# YUM repository locations
+postgresql_yum_repository_url: "http://yum.postgresql.org"
+postgresql_pgdg_repository_url: "https://download.postgresql.org/pub/repos/yum/"
+
+# YUM (RedHat, CentOS, etc.) baseurl/gpgkey
+postgresql_yum_repository_baseurl: "{{ postgresql_yum_repository_url }}/{{ postgresql_version }}/{{ ansible_os_family | lower }}/rhel-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}"
+postgresql_yum_repository_gpgkey: "{{ postgresql_pgdg_repository_url }}/RPM-GPG-KEY-PGDG-{{ postgresql_version_terse }}"
+
+# defaults file for sonarqube
+sonar_major_version: 8
+sonar_minor_version: 9.1.44547
+sonar_version: '{{ sonar_major_version }}.{{ sonar_minor_version }}'
+
+sonar_path: /opt/sonarqube
+sonar_user: sonar
+sonar_group: sonar
+#get the password from terrafrom ${random_password.db_pass.result}
+sonar_pwd: sonar
+
+#database
+#jdbc url from terraform ${module.database.db_hostname}/${var.application}
+jdbc_url: module.database.db_hostname/var.application
+
+#java
+java_package: java-11-openjdk-devel-11.0.9.11-0.el7_9
