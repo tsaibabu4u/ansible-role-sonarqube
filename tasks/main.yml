@@ -90,3 +90,28 @@
 - name: unzip Sonarqube
   unarchive: src="{{ sonar_path }}/sonarqube-{{ sonar_version }}.zip" dest={{ sonar_path }} copy=no
   tags: always
+
+- name: Setting JAVA_HOME at profile level
+  command:
+    cmd: sed -i -e '$a export JAVA_HOME={{ java_dir }}/{{ java_package }}' /etc/profile 
+  tags: always
+
+- name: Setting PATH at profile level
+  command:
+    cmd: sed -i -e '$a export PATH={{ java_dir }}/{{ java_package }}/bin:$PATH' /etc/profile   
+  tags: always
+
+- name: Setting JAVA_HOME at system level
+  command:
+    cmd: sed -i -e '$a export JAVA_HOME={{ java_dir }}/{{ java_package }}' ~/.bashrc 
+  tags: always
+
+- name: Setting PATH at system level
+  command:
+    cmd: sed -i -e '$a export PATH={{ java_dir }}/{{ java_package }}/bin:$PATH' ~/.bashrc   
+  tags: always
+
+- name: Refreshing SYS variables
+  command:
+    cmd: source ~/.bashrc   
+  tags: always
