@@ -66,3 +66,27 @@
     state: installed
   when: java_package|trim != ''  
   tags: always
+
+- name: create dir for java
+  file:
+    path: "{{ java_dir }}"
+    state: directory
+    #owner: 
+    #group:
+    #mode:
+  tags: always
+
+- name: copy java pkg to java dir path
+  command:
+    cmd: cp -avr /usr/lib/jvm/{{ java_package }} {{ java_dir }}  
+  tags: always
+
+- name: download Sonarqube version
+  get_url:
+    url="{{ sonar_download_url }}"
+    dest="{{ sonar_path }}/sonarqube-{{ sonar_version }}.zip"
+  tags: always
+
+- name: unzip Sonarqube
+  unarchive: src="{{ sonar_path }}/sonarqube-{{ sonar_version }}.zip" dest={{ sonar_path }} copy=no
+  tags: always

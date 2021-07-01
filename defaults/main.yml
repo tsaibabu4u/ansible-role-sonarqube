@@ -12,8 +12,9 @@ postgresql_yum_repository_gpgkey: "{{ postgresql_pgdg_repository_url }}/RPM-GPG-
 
 # defaults file for sonarqube
 sonar_major_version: 8
-sonar_minor_version: 9.1.44547
+sonar_minor_version: 4.2.36762
 sonar_version: '{{ sonar_major_version }}.{{ sonar_minor_version }}'
+sonar_download_url: https://binaries.sonarsource.com/CommercialDistribution/sonarqube-enterprise/sonarqube-enterprise-{{ sonar_version }}.zip
 
 sonar_path: /opt/sonarqube
 sonar_user: sonar
@@ -27,3 +28,4 @@ jdbc_url: module.database.db_hostname/var.application
 
 #java
 java_package: java-11-openjdk-devel-11.0.9.11-0.el7_9
+java_dir: /opt/java

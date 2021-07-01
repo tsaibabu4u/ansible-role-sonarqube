@@ -14,4 +14,4 @@
     #  tags: [always]
     - name: sonarquebe installation
       include: tasks/main.yml
-      tags: always
+      tags: alwaystom
