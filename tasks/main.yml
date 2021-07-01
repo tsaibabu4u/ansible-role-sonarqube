@@ -1,86 +1,68 @@
----
-- name: SonarQube instllation
-  hosts: localhost
-  connection: local
-  become: true
-  
-  var_files:
-    - vars/main.yml   
+- name: remove qualys
+  yum:
+    name: qualys
+    state: absent
+  tags: always
 
-  tasks:
-    #- name: Include vars
-    #  include_vars:
-    #     dir: vars
-    #  tags: [always]
-    - name: sonarquebe installation
-      include: tasks/sonar.yml
-      tags: always 
-    
-    - name: remove qualys
-      yum:
-        name: qualys
-        state: absent
-      tags: always
- 
-    - name: remove qualys
-      yum:
-        name: qualys
-        state: present
-      tags: always
-   
-    - name: check if PostgreSQL repo added/installed
-      yum:
-        list: "pgdg-redhat-repo"
-      register: postgresql_repo_pkg_installed_result
-      ignore_errors: yes
-      tags: always
+- name: remove qualys
+  yum:
+    name: qualys
+    state: present
+  tags: always
 
-    - name: install PostgreSQL repo package
-      yum:
-        name: "{{ postgresql_pgdg_repository_url }}/{{ postgresql_version_terse }}/redhat/rhel-latest-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
-        #name: https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-latest-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-        #name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-      register: postgresql_yum_result
-      until: postgresql_yum_result is succeeded
-      retries: 5
-      delay: 5
-      when: postgresql_repo_pkg_installed_result is failed
-      tags: always
+- name: check if PostgreSQL repo added/installed
+  yum:
+    list: "pgdg-redhat-repo"
+  register: postgresql_repo_pkg_installed_result
+  ignore_errors: yes
+  tags: always
 
-    - name: disable PostgreSQL module
-      command:
-         cmd: dnf module disable postgresql -y
-      register: disable_postgresql_module
-      changed_when:
-         - "disable_postgresql_module.rc == 0"
-         - "'Disabling modules:\\n postgresql' in disable_postgresql_module.stdout"
-      tags: always
+- name: install PostgreSQL repo package
+  yum:
+    name: "{{ postgresql_pgdg_repository_url }}/{{ postgresql_version_terse }}/redhat/rhel-latest-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+    #name: https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-latest-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    #name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+  register: postgresql_yum_result
+  until: postgresql_yum_result is succeeded
+  retries: 5
+  delay: 5
+  when: postgresql_repo_pkg_installed_result is failed
+  tags: always
 
-    - name: install PostgreSQL
-      yum:
-        name:
-          - "postgresql{{ postgresql_version_terse }}"
-        state: present
-        update_cache: yes
-      tags: always
+- name: disable PostgreSQL module
+  command:
+    cmd: dnf module disable postgresql -y
+  register: disable_postgresql_module
+  changed_when:
+    - "disable_postgresql_module.rc == 0"
+    - "'Disabling modules:\\n postgresql' in disable_postgresql_module.stdout"
+  tags: always
 
-    #- name: yum update
-    #  command:
-    #     cmd: yum update -y
-    #  ignore_errors: yes
-    #  tags: always
+- name: install PostgreSQL
+  yum:
+    name:
+      - "postgresql{{ postgresql_version_terse }}"
+  state: present
+  update_cache: yes
+  tags: always
 
-    - name: update all rpms to latest
-      yum:
-        name: '*'
-        state: latest
-        update_cache: yes
-      register: os_update_complete
-      tags: always
- 
-    - name: install Java OpenJDK
-      yum:
-        name: "{{ java_package }}"
-        state: installed
-      when: java_package|trim != ''  
-      tags: always
+#- name: yum update
+#  command:
+#     cmd: yum update -y
+#  ignore_errors: yes
+#  tags: always
+
+- name: update all rpms to latest
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+  register: os_update_complete
+  tags: always
+
+- name: install Java OpenJDK
+  yum:
+    name: "{{ java_package }}"
+    state: installed
+  when: java_package|trim != ''  
+  tags: always

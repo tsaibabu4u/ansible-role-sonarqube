@@ -1,0 +1,17 @@
+---
+- name: SonarQube instllation
+  hosts: localhost
+  connection: local
+  become: true
+  
+  var_files:
+    - vars/main.yml   
+
+  tasks:
+    #- name: Include vars
+    #  include_vars:
+    #     dir: vars
+    #  tags: [always]
+    - name: sonarquebe installation
+      include: tasks/main.yml
+      tags: always
